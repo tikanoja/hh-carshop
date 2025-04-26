@@ -8,6 +8,8 @@ import { ColDef, ICellRendererParams } from 'ag-grid-community';
 import Button from "@mui/material/Button";
 import Snackbar from "@mui/material/Snackbar";
 import { deleteCar, getCars } from '../carapi';
+import Addcar from './Addcar';
+import Editcar from './Editcar';
 
 export default function Carlist() {
   const [cars, setCars] = useState<Car[]>([]);
@@ -20,6 +22,10 @@ export default function Carlist() {
     { field: 'fuel', sortable: true, filter: true },
     { field: 'modelYear', headerName: 'Year', sortable: true, filter: true },
     { field: 'price', sortable: true, filter: true },
+    { 
+      cellRenderer: (params: ICellRendererParams) =>
+        <Editcar car={params.data} fetchCars={fetchCars} />
+    },
     {
       cellRenderer: (params: ICellRendererParams) => 
         <Button 
@@ -47,20 +53,35 @@ export default function Carlist() {
     }
   }
 
+  const saveCar = (car: Car) => {
+    fetch(`${API_CONFIG.BASE_URL}/cars`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(car)
+    })
+    .then(response => fetchCars())
+    .catch(err => console.error(err))
+  }
+
   useEffect(() => fetchCars(), []);
 
   return (
-    <div className="ag-theme-alpine" style={{ height: '100%', width: '100%' }}>
-      <AgGridReact
-        rowData={cars}
-        columnDefs={columnDefs}
-      />
+    <React.Fragment>
+      <Addcar saveCar={saveCar}/>
+      <div className="ag-theme-alpine" style={{ height: '100%', width: '100%' }}>
+        <AgGridReact
+          rowData={cars}
+          columnDefs={columnDefs}
+        />
+      </div>
       <Snackbar 
         open={open}
         autoHideDuration={2500}
         onClose={() => setOpen(false)}
         message="car deleted !"
       />
-    </div>
+    </React.Fragment>
   );
 }
