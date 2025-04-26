@@ -24,7 +24,7 @@ export default function Carlist() {
     { field: 'price', sortable: true, filter: true },
     { 
       cellRenderer: (params: ICellRendererParams) =>
-        <Editcar car={params.data} fetchCars={fetchCars} />
+        <Editcar updateCar={updateCar} car={params.data} fetchCars={fetchCars} />
     },
     {
       cellRenderer: (params: ICellRendererParams) => 
@@ -56,6 +56,18 @@ export default function Carlist() {
   const saveCar = (car: Car) => {
     fetch(`${API_CONFIG.BASE_URL}/cars`, {
       method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(car)
+    })
+    .then(response => fetchCars())
+    .catch(err => console.error(err))
+  }
+
+  const updateCar = (car: Car, link) => {
+    fetch(link, {
+      method: 'PUT',
       headers: {
         'Content-Type': 'application/json'
       },

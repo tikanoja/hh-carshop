@@ -42,8 +42,8 @@ export default function Editcar(props) {
     });
   };
 
-  const addCar = () => {
-    props.saveCar(car);
+  const updateCar = () => {
+    props.updateCar(car, props.car._links.car.href);
     handleClose();
   }
 
@@ -129,7 +129,7 @@ export default function Editcar(props) {
           </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
-          <Button onClick={addCar}>Save</Button>
+          <Button onClick={updateCar}>Save</Button>
         </DialogActions>
       </Dialog>
     </div>
